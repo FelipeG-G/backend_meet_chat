@@ -78,35 +78,10 @@ io.on('connection', (socket) => {
     console.log(`📊 Usuarios en sala ${roomId}:`, Object.keys(rooms[roomId]).length);
   });
 
-  // Manejo de señales WebRTC
-  socket.on('webrtc:offer', ({ to, offer, from }) => {
-    console.log(`📤 Enviando offer de ${from} a ${to}`);
-    io.to(to).emit('webrtc:offer', { from, offer });
-  });
-
-  socket.on('webrtc:answer', ({ to, answer, from }) => {
-    console.log(`📤 Enviando answer de ${from} a ${to}`);
-    io.to(to).emit('webrtc:answer', { from, answer });
-  });
-
-  socket.on('webrtc:ice-candidate', ({ to, candidate, from }) => {
-    console.log(`🧊 Enviando ICE candidate de ${from} a ${to}`);
-    io.to(to).emit('webrtc:ice-candidate', { from, candidate });
-  });
-
   // Chat
   socket.on('chat:message', (data) => {
     console.log(`💬 Mensaje de ${data.userName}: ${data.message}`);
     io.to(data.roomId).emit('chat:message', data);
-  });
-
-  // Control de medios (mute/video)
-  socket.on('media:toggle', ({ roomId, type, enabled }) => {
-    socket.to(roomId).emit('peer:media-toggle', {
-      socketId: socket.id,
-      type,
-      enabled
-    });
   });
 
   // Desconexión
@@ -144,7 +119,3 @@ const PORT = Number(process.env.PORT) || 3000;
 server.listen(PORT, () => {
   console.log(`🚀 Servidor corriendo en puerto ${PORT}`);
 });
-
-
-
-
